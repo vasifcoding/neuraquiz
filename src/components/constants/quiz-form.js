@@ -7,10 +7,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useRouter } from "next/navigation"
-
+import {Loader} from "@/components/constants/loader";
 export default function QuizForm() {
 const router = useRouter()
- 
+ const [loading , setLoading] = useState(false)
   const [formData, setFormData] = useState({
     number: "",
     text: "",
@@ -33,11 +33,18 @@ const router = useRouter()
   }
 
   const handleSubmit = (e) => {
+ setLoading(true)
     e.preventDefault()
     console.log("Form submitted:", formData)
     // Handle form submission here
   }
  const handleClick = ()=>{
+if(formData.number.trim() === "" || formData.text.trim() === ""){
+  alert("Lütfen tüm alanları doldurun.")
+  setLoading(false)
+  return
+}
+else{ setLoading(true)
 axios.post('/api/getquiz', {
 difficulty : formData.difficulty,
 category : formData.text,
@@ -54,6 +61,8 @@ const cleanData = response.data.content.replace(/```json|```/g, '')   // markdow
   .catch(function (error) {
     console.log(error);
   });
+setLoading(false)}
+ 
 }
   return (
     <Card className="w-full max-w-md mx-auto">
@@ -116,9 +125,11 @@ const cleanData = response.data.content.replace(/```json|```/g, '')   // markdow
           </div>
 
           {/* Confirm Button */}
-          <Button onClick={handleClick} type="submit" className="w-full">
+         
+         
+          {loading ? <Loader size="lg" className="mx-auto mt-4" /> :  <Button onClick={handleClick} type="submit" className="w-full">
             Confirm
-          </Button>
+          </Button>}
         </form>
       </CardContent>
     </Card>

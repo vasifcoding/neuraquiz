@@ -39,7 +39,7 @@ Her soru için:
 
  MARKDOWN ETIKETI YAZI VS EKLEME !!!!
 Şu formatta JSON array olarak üret:
-[{"question": "...","options": {"a": "...","b": "...","c": "...","d": "...","e": "..."},"answer": "b"},...]
+[{"question": "...","options": {"a": "...","b": "...","c": "...","d": "...","e": "..."},"answer": "b","explanation":"doğru cevap b çünkü..."},...]
 
 Yalnızca JSON array döndür.
 `,

@@ -33,12 +33,12 @@ export default function QuizCompleted({
 
   // Determine performance message based on score percentage
   const getPerformanceMessage = () => {
-    if (percentage >= 90) return "Outstanding! You're a quiz genius!"
+    if (percentage >= 90) return "Outstanding! You are a quiz genius!"
     if (percentage >= 80) return "Excellent work! You really know your stuff!"
-    if (percentage >= 70) return "Great job! You've got solid knowledge!"
+    if (percentage >= 70) return "Great job! You have got solid knowledge!"
     if (percentage >= 60) return "Good effort! Keep learning and improving!"
-    if (percentage >= 50) return "Not bad! You're on the right track."
-    return "Keep practicing! You'll improve with time."
+    if (percentage >= 50) return "Not bad! You are on the right track."
+    return "Keep practicing! You will improve with time."
   }
 
   // Determine badge based on score percentage
@@ -100,7 +100,7 @@ export default function QuizCompleted({
               <Trophy className="h-10 w-10 text-primary" />
             </motion.div>
             <CardTitle className="text-3xl font-bold">Congratulations!</CardTitle>
-            <CardDescription className="text-lg">You've completed the {quizTitle}</CardDescription>
+            <CardDescription className="text-lg">You have completed the {quizTitle}</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">

@@ -146,7 +146,7 @@ See the answers <Checkbox onClick={handleChange} />
 )}
 </div>
 {quizQueue === quizzes.length - 1 ? (<Button variant="outline"  className={"cursor-pointer float-end "} onClick={()=>{router.push("/quiz-completed")}} ><SendHorizontal /> Finish</Button>): <Button onClick={nextQuiz} className={"float-end cursor-pointer"}><ArrowRightFromLine /> Next</Button>}
-{quizQueue === 0 ? (null):<Button  className={"cursor-pointer"} onClick={prevQuiz} ><ArrowLeftFromLine /> Previous</Button>}
+{quizQueue === 0 ? (null):<Button  className={"cursor-pointer"} onClick={prevQuiz} ><ArrowLeftFromLine /> Previous</Button>} 
 
     </div>
   );

@@ -55,51 +55,40 @@ export default function QuizzesPage() {
 }, [hearts]);
   useEffect(() => {
     setHearts(["❤️", "❤️", "❤️", "❤️", "❤️", "❤️"]);
-    
-    // Güvenli bir şekilde sessionStorage'dan veri okuma
-    try {
-      const time = sessionStorage.getItem("quizTime");
-      const quizData = sessionStorage.getItem("quizData");
+    const time = sessionStorage.getItem("quizTime");
+    setQuizTime(time.replace(/"/g, ""));
 
-      if (!time || !quizData) {
-        router.push('/quiz');
-        return;
-      }
-
-      // Quiz zamanını işleme
-      const parsedTime = JSON.parse(time);
-      if (typeof parsedTime === 'string' && parsedTime.includes('.')) {
-        const [min, sec] = parsedTime.split(".").map(Number);
-        if (!isNaN(min) && !isNaN(sec)) {
-          setQuizTime(min * 60 + sec);
-        } else {
-          router.push('/quiz');
-        }
-      } else {
-        router.push('/quiz');
-      }
-
-      // Quiz verilerini işleme
-      try {
-        const cleaned = quizData
-          .replace(/\\n/g, "")
-          .replace(/\\"/g, '"')
-          .replace(/^"|"$/g, "");
-        const parsed = JSON.parse(cleaned);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          setQuizzes(parsed);
-        } else {
-          router.push('/quiz');
-        }
-      } catch (err) {
-        console.error("Quiz data parse hatası:", err);
-        router.push('/quiz');
-      }
-    } catch (error) {
-      console.error("Session storage erişim hatası:", error);
-      router.push('/quiz');
+    if (time) {
+      const [min, sec] = JSON.parse(time).split(".").map(Number);
+      setQuizTime(min * 60 + sec);
     }
-  }, [router]);
+
+    const stored = sessionStorage.getItem("quizData");
+    if (stored) {
+      try {
+        // Gelen stringin gerçekten JSON olup olmadığını kontrol ediyoruz
+        const cleaned = stored
+          .replace(/\\n/g, "") // newline kaçışlarını temizle
+          .replace(/\\"/g, '"') // kaçışlı tırnakları düzelt
+          .replace(/^"|"$/g, ""); // en baştaki ve sondaki çift tırnakları kaldır
+
+        const parsed = JSON.parse(cleaned);
+        setQuizzes(parsed);
+      } catch (err) {
+        console.error("JSON parse hatası:", err);
+      }
+    }
+    const storedTime = sessionStorage.getItem("quiztime");
+
+    if (storedTime) {
+      try {
+        const parsedTime = JSON.parse(storedTime);
+        setQuizTime(parsedTime);
+      } catch (error) {}
+    } else {
+      setQuizTime(sessionStorage.getItem("quizTime"));
+    }
+  }, []);
   useEffect(() => {
     if (quizTime <= 0) {
       setOpenTimeModal(true);

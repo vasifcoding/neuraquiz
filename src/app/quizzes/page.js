@@ -10,97 +10,102 @@ import Link from "next/link";
 import { Loader } from "@/components/constants/loader";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { FaHeart } from 'react-icons/fa';
 import {
-
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 
 export default function QuizzesPage() {
   const [hearts, setHearts] = useState([]);
   const router = useRouter();
-  const [openHeartModal, setOpenHeartModal] = useState(false); 
-  const [openTimeModal, setOpenTimeModal] = useState(false); 
+  const [openHeartModal, setOpenHeartModal] = useState(false);
+  const [openTimeModal, setOpenTimeModal] = useState(false);
   const [quizzes, setQuizzes] = useState([]);
   const [checked, setChecked] = useState(false);
   const [quizQueue, setQuizQueue] = useState(0);
   const [selectedIndex, setSelectedIndex] = useState(null);
-  const [quizTime, setQuizTime] = useState();
+  const [quizTime, setQuizTime] = useState(null);
   const [loading, setLoading] = useState(false);
+
   const nextQuiz = () => {
     setQuizQueue(quizQueue + 1);
     setSelectedIndex(null);
     setChecked(false);
   };
-
-
   const prevQuiz = () => {
     setQuizQueue(quizQueue - 1);
     setSelectedIndex(null);
     setChecked(false);
   };
-  const handleChange = (e) => {
-    setChecked(!checked);
-  };
+
   const removeHeart = () => {
-    setHearts(hearts.slice(0, -1));
+    setHearts((prev) => prev-1);
   };
-  useEffect(() => {
-    hearts.length === 0 ? setOpenHeartModal(true) : setOpenHeartModal(false);
 
-}, [hearts]);
   useEffect(() => {
-    setHearts(["❤️", "❤️", "❤️", "❤️", "❤️", "❤️"]);
-    const time = sessionStorage.getItem("quizTime");
-    setQuizTime(time.replace(/"/g, ""));
+    hearts === 0 ? setOpenHeartModal(true) : setOpenHeartModal(false);
+  }, [hearts]);
 
-    if (time) {
-      const [min, sec] = JSON.parse(time).split(".").map(Number);
-      setQuizTime(min * 60 + sec);
-    }
+  useEffect(() => {
+    setHearts(6);
 
     const stored = sessionStorage.getItem("quizData");
     if (stored) {
       try {
-        // Gelen stringin gerçekten JSON olup olmadığını kontrol ediyoruz
         const cleaned = stored
-          .replace(/\\n/g, "") // newline kaçışlarını temizle
-          .replace(/\\"/g, '"') // kaçışlı tırnakları düzelt
-          .replace(/^"|"$/g, ""); // en baştaki ve sondaki çift tırnakları kaldır
-
+          .replace(/\\n/g, "")
+          .replace(/\\"/g, '"')
+          .replace(/^"|"$/g, "");
         const parsed = JSON.parse(cleaned);
         setQuizzes(parsed);
       } catch (err) {
         console.error("JSON parse hatası:", err);
       }
     }
-    const storedTime = sessionStorage.getItem("quiztime");
 
-    if (storedTime) {
+    const time = sessionStorage.getItem("quizTime");
+    if (time) {
       try {
-        const parsedTime = JSON.parse(storedTime);
-        setQuizTime(parsedTime);
-      } catch (error) {}
+        // time string olarak "mm.ss" formatındaysa parse et
+        const parsedTime = JSON.parse(time);
+        if (typeof parsedTime === "string") {
+          const [min, sec] = parsedTime.split(".").map(Number);
+          setQuizTime(min * 60 + sec);
+        } else if (typeof parsedTime === "number") {
+          setQuizTime(parsedTime);
+        } else {
+          setQuizTime(300); // Default 5 dakika (300 saniye)
+        }
+      } catch {
+        setQuizTime(300); // Default zaman
+      }
     } else {
-      setQuizTime(sessionStorage.getItem("quizTime"));
+      setQuizTime(300);
     }
   }, []);
+
   useEffect(() => {
+    if (quizTime === null) return;
     if (quizTime <= 0) {
       setOpenTimeModal(true);
       return;
     }
-    const timer = setInterval(() => setQuizTime((t) => t - 1), 1000);
-    sessionStorage.setItem("quiztime", JSON.stringify(quizTime));
+    const timer = setInterval(() => {
+      setQuizTime((t) => {
+        const newTime = t - 1;
+        sessionStorage.setItem("quizTime", JSON.stringify(newTime));
+        return newTime;
+      });
+    }, 1000);
     return () => clearInterval(timer);
   }, [quizTime]);
 
-  const minutes = String(Math.floor(quizTime / 60)).padStart(2, "0");
-  const seconds = String(quizTime % 60).padStart(2, "0");
+  const minutes = String(Math.floor((quizTime || 0) / 60)).padStart(2, "0");
+  const seconds = String((quizTime || 0) % 60).padStart(2, "0");
 
   if (!quizzes || quizzes.length === 0) {
     return (
@@ -112,27 +117,20 @@ export default function QuizzesPage() {
 
   const choosenVariant = (e, isCorrect) => {
     setSelectedIndex(e);
-    console.log("Seçilen:", e);
-    console.log("secilen", isCorrect);
     isCorrect ? setChecked(true) : setChecked(false);
     isCorrect ? null : removeHeart();
-    // if (quizzes[quizQueue].answer === e) {
-    //   setQuizQueue(quizQueue + 1);
-    // } else {
-    //   alert("Yanlış cevap! Doğru cevap: " + quizzes[quizQueue].answer.toUpperCase())
-    // }
-    // if (quizQueue === quizzes.length - 1) {
-    //   alert("Quiz bitti!")
-    //   setQuizQueue(0)
-    // }
   };
-const refreshQuiz = () => {
-  setOpenHeartModal(false);
-  setHearts(["❤️", "❤️", "❤️", "❤️", "❤️", "❤️"]);
-  setQuizQueue(0);
-  setChecked(false);
-  setSelectedIndex(null);
-}
+
+  const refreshQuiz = () => {
+    setOpenHeartModal(false);
+    setHearts(6);
+    setQuizQueue(0);
+    setChecked(false);
+    setSelectedIndex(null);
+    setQuizTime(300);
+    sessionStorage.setItem("quizTime", JSON.stringify(300));
+  };
+
   return (
     <div className="p-4 container mx-auto py-10">
       <Dialog open={openHeartModal}>
@@ -140,10 +138,11 @@ const refreshQuiz = () => {
           <DialogHeader>
             <DialogTitle>Üzgünüz tüm canlarınızı bitirdiniz 😢</DialogTitle>
             <DialogDescription>
-              Yeniden başlamak için tıklayınız 
-              <Button className="mx-3"
+              Yeniden başlamak için tıklayınız{" "}
+              <Button
+                className="mx-3"
                 onClick={() => {
-                  refreshQuiz()
+                  refreshQuiz();
                 }}
               >
                 Yeniden Başla
@@ -157,10 +156,11 @@ const refreshQuiz = () => {
           <DialogHeader>
             <DialogTitle>Üzgünüz tüm zamanınız bitti 😢</DialogTitle>
             <DialogDescription>
-             Sonuçları görüntülemek için tıklayınız 
-              <Button className="mx-3"
+              Sonuçları görüntülemek için tıklayınız{" "}
+              <Button
+                className="mx-3"
                 onClick={() => {
-                 router.push("/quiz-completed");
+                  router.push("/quiz-completed");
                 }}
               >
                 Sonuçları Görüntüle
@@ -173,16 +173,9 @@ const refreshQuiz = () => {
       <Link href="/quiz">
         <ArrowLeftFromLine />
       </Link>
+
       <h1 className="text-2xl font-bold text-center">Quiz Listesi</h1>
-      {hearts.length === 0 ? null : <div className="flex justify-end  mb-4">
-        <p className="border-2  border-gray-300 rounded-full p-2">
-          {hearts.map((heart, index) => (
-            <span className="text-2xl mx-2" key={index}>
-              {heart}
-            </span>
-          ))}
-        </p>
-      </div>}
+      
       <p className="text-center text-2xl font-bold mb-4">
         Kalan Süre:
         <span
@@ -197,36 +190,15 @@ const refreshQuiz = () => {
           {minutes}:{seconds}
         </span>
       </p>
-      {/* <p className="my-2  ">
-See the answers <Checkbox onClick={handleChange} />
-</p> */}
-
-      {/* {quizzes.map((quiz, index) => (
-        <div key={index} className="mb-6 border p-4 rounded shadow">
-          <p className="font-semibold mb-2">
-            {index + 1}. {quiz.question}
-          </p>
-          <ul className="list-disc pl-6">
-            {Object.entries(quiz.options).map(([key, option]) => (
-              <li key={key}>
-                <strong>{key})</strong> {option}
-              </li>
-            ))}
-          </ul>
-
-         {checked && (
-<div>
-            <p className="mt-2  text-green-500">
-              Correct Answer: {quiz.answer.toUpperCase()}
-            </p>
-           <p className="mt-2  text-green-700">
-         {quiz.explanation}
-</p>
-</div>
-            
-          )}
-        </div>
-      ))} */}
+{hearts === 0 ? null : (
+  <div className="flex justify-end mb-4">
+    <p className="border-2 border-gray-300 rounded-full p-2 flex gap-1">
+      {Array.from({ length: hearts }).map((_, i) => (
+        <FaHeart className="mx-1" key={i} color="red" size={24} />
+      ))}
+    </p>
+  </div>
+)}
       <div key={quizQueue} className="mb-6 border p-4 rounded shadow">
         <p className="font-semibold mb-2">
           {quizQueue + 1}. {quizzes[quizQueue].question}
@@ -258,9 +230,7 @@ See the answers <Checkbox onClick={handleChange} />
           })}
         </ul>
         {checked && (
-          <p className="mt-2  text-green-700">
-            {quizzes[quizQueue].explanation}
-          </p>
+          <p className="mt-2  text-green-700">{quizzes[quizQueue].explanation}</p>
         )}
       </div>
       {loading ? null : quizQueue === quizzes.length - 1 ? (

@@ -1,52 +1,36 @@
-// app/api/quiz/route.js
-import OpenAI from "openai";
+import { GoogleGenAI } from "@google/genai";
 
-// API anahtarını buraya doğrudan yazma, .env dosyasından çek
-const token = process.env["GITHUB_TOKEN"];
-const endpoint = "https://models.github.ai/inference";
-const model = "openai/gpt-4.1";
+// API key'i burada kullanıyoruz
+const ai = new GoogleGenAI({ apiKey: "AIzaSyCqfSes7lD2MCPaSAQMQQrafcag8snqLdM" });
 
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { difficulty, category, amount} = body;
-  
-   const prompt = `
-You are an AI that creates quizzes.
-Category: ${category}
-Difficulty level: ${difficulty}
-Number of questions: ${amount}
-Remove escape characters like "\\n" and "\\t". Remove all escape characters.
+    const { difficulty, category, amount} = body; 
 
-For each question:
-- "question": Question text
-- "options": 5 options: a, b, c, d, e
-- "answer": The correct option (e.g., "c")
-- "explanation": Brief explanation
-Generate in the following JSON array format:
-[{"quizTime":"set a quiz time like : minutes.seconds "}{"question": "...","options": {"a": "...","b": "...","c": "...","d": "...","e": "..."},"answer": "b","explanation":"The correct answer is b because..."},]
-ONLY return the JSON array.
-`;
+    const response = await ai.models.generateContent({
+      model: "gemini-2.0-flash",
+      contents: `Sen bir sınav (quiz) oluşturan bir yapay zekasın.
+Kategori: ${category}
+Zorluk seviyesi: ${difficulty}
+Soru sayısı: ${amount}
+"\n" ve "\t" gibi kaçış karakterlerini kaldır. Tüm kaçış karakterlerini sil.
 
+Her soru için:
+- "question": Soru metni
+- "options": 5 seçenek: a, b, c, d, e
+- "answer": Doğru seçenek (örneğin: "c")
+- "explanation": Kısa açıklama
 
-    const client = new OpenAI({
-      baseURL: endpoint,
-      apiKey: token,
+Aşağıdaki JSON dizi formatında oluştur:
+[{"quizTime":"süreyi şu şekilde ayarla: dakika.saniye"}, {"question": "...","options": {"a": "...","b": "...","c": "...","d": "...","e": "..."},"answer": "b","explanation":"Doğru cevap b çünkü..."},]
+
+SADECE JSON dizisini döndür.
+
+`,
     });
 
-    const response = await client.chat.completions.create({
-      messages: [
-        { role: "system", content: "" },
-        { role: "user", content: prompt },
-      ],
-      temperature: 1,
-      top_p: 1,
-      model: model,
-    });
-
-    const result = response.choices[0].message.content;
-
-    return new Response(JSON.stringify({ content: result }), {
+    return new Response(JSON.stringify({ content: response.text }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

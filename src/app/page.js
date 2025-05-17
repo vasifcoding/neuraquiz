@@ -32,8 +32,8 @@ export default function HomePage() {
         <section className="container mx-auto flex justify-center py-12 md:py-24 lg:py-32">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
             <h1 className="text-3xl font-bold leading-tight sm:text-5xl md:text-6xl">
-              Test Your Knowledge with{" "}
-              <span className="text-primary">QuizAI</span>
+              <span className="text-primary">QuizAI {" "}</span>
+             ile Bilgiinizi Test Edin
             </h1>
             <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
               Challenge yourself with thousands of quizzes across various

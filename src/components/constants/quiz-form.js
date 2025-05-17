@@ -79,7 +79,8 @@ const router = useRouter()
     try {
       setLoading(true);
       console.log("Form submitted:", formData);
-      
+       sessionStorage.setItem("quizCategory", formData.text);
+       sessionStorage.setItem("quizAmount", formData.number);
       const response = await axios.post('/api/getquiz', {
         difficulty: formData.difficulty,
         category: formData.text,

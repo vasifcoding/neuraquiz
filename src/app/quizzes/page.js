@@ -1,6 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
+import { Badge } from "@/components/ui/badge"
 
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
+import { Progress } from "@/components/ui/progress"
+import { Heart, Timer } from "lucide-react"
 import {
   ArrowLeftFromLine,
   ArrowRightFromLine,
@@ -10,7 +14,7 @@ import Link from "next/link";
 import { Loader } from "@/components/constants/loader";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { FaHeart } from 'react-icons/fa';
+import { FaHeart } from "react-icons/fa";
 import {
   Dialog,
   DialogContent,
@@ -30,7 +34,8 @@ export default function QuizzesPage() {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [quizTime, setQuizTime] = useState(null);
   const [loading, setLoading] = useState(false);
-
+ const [quizCategory, setQuizCategory] = useState(null);
+ const [quizAmount , setQuizAmount] = useState(null);
   const nextQuiz = () => {
     setQuizQueue(quizQueue + 1);
     setSelectedIndex(null);
@@ -86,6 +91,8 @@ export default function QuizzesPage() {
     } else {
       setQuizTime(300);
     }
+setQuizCategory(sessionStorage.getItem("quizCategory"));
+setQuizAmount(sessionStorage.getItem("quizAmount"));
   }, []);
 
   useEffect(() => {
@@ -132,7 +139,11 @@ export default function QuizzesPage() {
   };
 
   return (
-    <div className="p-4 container mx-auto py-10">
+     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 p-4">
+      <div className="w-full max-w-3xl">
+        {/* Quiz Başlık ve Bilgi Çubuğu */}
+        
+
       <Dialog open={openHeartModal}>
         <DialogContent closable={false}>
           <DialogHeader>
@@ -174,31 +185,37 @@ export default function QuizzesPage() {
         <ArrowLeftFromLine />
       </Link>
 
-      <h1 className="text-2xl font-bold text-center">Quiz Listesi</h1>
-      
-      <p className="text-center text-2xl font-bold mb-4">
-        Kalan Süre:
-        <span
-          className={`ml-2 ${
-            quizTime <= 30
-              ? "text-red-500"
-              : quizTime <= 60
-              ? "text-yellow-500"
-              : "text-green-500"
-          }`}
-        >
-          {minutes}:{seconds}
-        </span>
-      </p>
-{hearts === 0 ? null : (
-  <div className="flex justify-end mb-4">
-    <p className="border-2 border-gray-300 rounded-full p-2 flex gap-1">
-      {Array.from({ length: hearts }).map((_, i) => (
-        <FaHeart className="mx-1" key={i} color="red" size={24} />
-      ))}
-    </p>
-  </div>
-)}
+     <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-slate-800">Quiz Konusu : {quizCategory}</h1>
+          <div className="flex items-center gap-4">
+            {/* Zaman Göstergesi */}
+            <div className="flex items-center gap-2">
+              <Timer className="h-5 w-5 text-amber-500" />
+              <div className="flex flex-col">
+                <span className="text-xs text-slate-500">Kalan Süre</span>
+                <span className="font-medium">{minutes}:{seconds}</span>
+              </div>
+            </div>
+
+            {/* Can Göstergesi */}
+            <div className="flex items-center gap-2">
+              <Heart className="h-5 w-5 text-red-500" />
+              <div className="flex gap-1">
+                <Badge variant="outline" className="bg-red-500 text-white">
+                  <Heart className="mr-1 h-3 w-3 fill-current" />{hearts}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        </div>
+      <div className="mb-6">
+          <div className="mb-2 flex justify-between text-sm">
+            <span>Soru {quizQueue + 1}/{quizAmount}</span>
+            
+          </div>
+          <Progress value={(quizQueue+1) * 100 / quizAmount} className="h-2" />
+        </div>
+
       <div key={quizQueue} className="mb-6 border p-4 rounded shadow">
         <p className="font-semibold mb-2">
           {quizQueue + 1}. {quizzes[quizQueue].question}
@@ -260,5 +277,6 @@ export default function QuizzesPage() {
         </Button>
       )}
     </div>
+</main>
   );
 }

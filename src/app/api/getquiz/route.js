@@ -1,51 +1,52 @@
-import { GoogleGenAI } from "@google/genai";
-export async function GET(request) {
-return new Response("Hello, Next.js!");
-}
+// app/api/quiz/route.js
+import OpenAI from "openai";
 
-// export async function POST(request) {
-//   const body = await request.json();
-//   const { quizType, difficulty, category, amount } = body;
-//   const url = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=${quizType}`;
-//   const res = await fetch(url);
-//   const data = await res.json();
-//   return new Response(JSON.stringify(data));
-// }
-
-
-
-
-// API key'i burada kullanıyoruz
-const ai = new GoogleGenAI({ apiKey: "AIzaSyCqfSes7lD2MCPaSAQMQQrafcag8snqLdM" });
+// API anahtarını buraya doğrudan yazma, .env dosyasından çek
+const token = process.env["GITHUB_TOKEN"];
+const endpoint = "https://models.github.ai/inference";
+const model = "openai/gpt-4.1";
 
 export async function POST(request) {
   try {
-   const body = await request.json();
-  const {  difficulty, category, amount } = body;
-   console.log("Received data:", body); // Log the received data
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",
-      contents: `
-Sen bir quiz oluşturma yapay zekasısın.
-Kullanıcının belirlediği konu: ${category}
-Zorluk seviyesi: ${difficulty}
-Soru sayısı: ${amount}
-"\ N" ve "\ t" gibi kaçış karakterlerini sil.
-TUM Kaçış karakterlerini sil.
-Her soru için:
-- "question": Soru metni
-- "options": a, b, c, d, e olmak üzere 5 şık
-- "answer": Doğru şıkkın harfi (örn: "c")
+    const body = await request.json();
+    const { difficulty, category, amount} = body;
+  
+   const prompt = `
+You are an AI that creates quizzes.
+Category: ${category}
+Difficulty level: ${difficulty}
+Number of questions: ${amount}
+Remove escape characters like "\\n" and "\\t". Remove all escape characters.
 
- MARKDOWN ETIKETI YAZI VS EKLEME !!!!
-Şu formatta JSON array olarak üret:
-[{"question": "...","options": {"a": "...","b": "...","c": "...","d": "...","e": "..."},"answer": "b","explanation":"doğru cevap b çünkü..."},...]
+For each question:
+- "question": Question text
+- "options": 5 options: a, b, c, d, e
+- "answer": The correct option (e.g., "c")
+- "explanation": Brief explanation
+Generate in the following JSON array format:
+[{"quizTime":"set a quiz time like : minutes.seconds "}{"question": "...","options": {"a": "...","b": "...","c": "...","d": "...","e": "..."},"answer": "b","explanation":"The correct answer is b because..."},]
+ONLY return the JSON array.
+`;
 
-Yalnızca JSON array döndür.
-`,
+
+    const client = new OpenAI({
+      baseURL: endpoint,
+      apiKey: token,
     });
 
-    return new Response(JSON.stringify({ content: response.text }), {
+    const response = await client.chat.completions.create({
+      messages: [
+        { role: "system", content: "" },
+        { role: "user", content: prompt },
+      ],
+      temperature: 1,
+      top_p: 1,
+      model: model,
+    });
+
+    const result = response.choices[0].message.content;
+
+    return new Response(JSON.stringify({ content: result }), {
       status: 200,
       headers: { "Content-Type": "application/json" },
     });

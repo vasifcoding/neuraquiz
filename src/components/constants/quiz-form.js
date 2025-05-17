@@ -8,14 +8,26 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { useRouter } from "next/navigation"
 import {Loader} from "@/components/constants/loader";
+import  Mycombobox  from "@/components/ui/combobox"
+import { toast } from "react-toastify"
+import ToastNotification from "@/components/ui/toastnotification"
+import { Bounce } from "react-toastify";
 export default function QuizForm() {
 const router = useRouter()
+
  const [loading , setLoading] = useState(false)
   const [formData, setFormData] = useState({
     number: "",
     text: "",
     difficulty: "normal",
+    
   })
+// const handleLanguageChange = (newLang) => {
+//   setFormData((prev) => ({
+//     ...prev,
+//     language: newLang,
+//   }))
+// }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -32,40 +44,73 @@ const router = useRouter()
     }))
   }
 
-  const handleSubmit = (e) => {
- setLoading(true)
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    console.log("Form submitted:", formData)
-    // Handle form submission here
+    
+    if(formData.number.trim() === "" || formData.text.trim() === ""){
+      toast.error('Please fill in all required fields!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+    else if(formData.number > 40 || formData.number < 1){
+      toast.error('Sorular 1-40 arası olmalıdır!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      console.log("Form submitted:", formData);
+      
+      const response = await axios.post('/api/getquiz', {
+        difficulty: formData.difficulty,
+        category: formData.text,
+        amount: formData.number,
+      });
+
+      const cleanData = response.data.content.replace(/```json|```/g, '')
+        .replace(/\\n/g, '')
+        .replace(/\\"/g, '"')
+        .replace(/^"|"$/g, '')
+        .trim();
+      const parsedData = JSON.parse(cleanData);
+      const [quizMeta, ...quizItems] = parsedData;
+
+      sessionStorage.setItem("quizData", JSON.stringify(quizItems));
+      sessionStorage.setItem("quizTime", JSON.stringify(quizMeta.quizTime));
+      router.push('/quizzes');
+    } catch (error) {
+      console.error(error);
+      toast.error('An error occurred while fetching the quiz!');
+    } finally {
+      setLoading(false);
+    }
   }
  const handleClick = ()=>{
-if(formData.number.trim() === "" || formData.text.trim() === ""){
-  alert("Lütfen tüm alanları doldurun.")
-  setLoading(false)
-  return
-}
-else{ setLoading(true)
-axios.post('/api/getquiz', {
-difficulty : formData.difficulty,
-category : formData.text,
-amount : formData.number,
-  })
-  .then(function (response) {
-const cleanData = response.data.content.replace(/```json|```/g, '')   // markdown bloklarını sil
-      .replace(/\\n/g, '')           // \n kaçış karakterlerini sil
-      .trim();
-  sessionStorage.setItem("quizData", JSON.stringify(cleanData))
-   router.push('/quizzes')
-    console.log(response);
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-setLoading(false)}
+
  
 }
   return (
     <Card className="w-full max-w-md mx-auto">
+<ToastNotification />
       <CardHeader>
         <CardTitle className="text-center">Quiz Settings</CardTitle>
       </CardHeader>
@@ -76,6 +121,7 @@ setLoading(false)}
             <div className="space-y-2">
               <Label htmlFor="number">Number of quizzes</Label>
               <Input
+                min={1}
                 id="number"
                 name="number"
                 type="number"
@@ -85,6 +131,11 @@ setLoading(false)}
                 required
               />
             </div>
+{/* <div className="space-y-2">
+<Label htmlFor="number">Select Quiz Language</Label>
+  <Mycombobox value={formData.language} onChange={handleLanguageChange}/>
+
+</div> */}
 
             {/* Text Input */}
             <div className="space-y-2">
@@ -127,7 +178,7 @@ setLoading(false)}
           {/* Confirm Button */}
          
          
-          {loading ? <Loader size="lg" className="mx-auto mt-4" /> :  <Button onClick={handleClick} type="submit" className="w-full">
+          {loading ? <Button disabled type="button" className="w-full p-4"><Loader variant="secondary" size="lg" className="mx-auto  " /> </Button>:  <Button  type="submit" className="w-full">
             Confirm
           </Button>}
         </form>

@@ -4,8 +4,8 @@ import Link from "next/link"
 export default function Footer() {
   return (
     <>
-       <footer className="border-t bg-muted/50">
-        <div className="container py-8 md:py-12 flex justify-center">
+       <footer className=" border-t bg-muted/50">
+        <div className="py-8 md:py-12 flex justify-center">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row max-w-5xl w-full">
             <div className="flex items-center gap-2">
               <Brain className="h-5 w-5 text-primary" />

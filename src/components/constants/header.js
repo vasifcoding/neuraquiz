@@ -16,7 +16,7 @@ return (
             <Link href="#" className="text-sm font-medium hover:text-primary">
               Home
             </Link>
-            <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-primary">
+            <Link href="/categories" className="text-sm font-medium text-muted-foreground hover:text-primary">
               Categories
             </Link>
             <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-primary">

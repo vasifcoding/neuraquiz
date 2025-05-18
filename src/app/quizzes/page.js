@@ -1,10 +1,15 @@
 "use client";
 import { useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge"
+import { Badge } from "@/components/ui/badge";
 
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { Heart, Timer } from "lucide-react"
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Heart, Timer } from "lucide-react";
 import {
   ArrowLeftFromLine,
   ArrowRightFromLine,
@@ -34,8 +39,8 @@ export default function QuizzesPage() {
   const [selectedIndex, setSelectedIndex] = useState(null);
   const [quizTime, setQuizTime] = useState(null);
   const [loading, setLoading] = useState(false);
- const [quizCategory, setQuizCategory] = useState(null);
- const [quizAmount , setQuizAmount] = useState(null);
+  const [quizCategory, setQuizCategory] = useState(null);
+  const [quizAmount, setQuizAmount] = useState(null);
   const nextQuiz = () => {
     setQuizQueue(quizQueue + 1);
     setSelectedIndex(null);
@@ -48,7 +53,7 @@ export default function QuizzesPage() {
   };
 
   const removeHeart = () => {
-    setHearts((prev) => prev-1);
+    setHearts((prev) => prev - 1);
   };
 
   useEffect(() => {
@@ -91,8 +96,8 @@ export default function QuizzesPage() {
     } else {
       setQuizTime(300);
     }
-setQuizCategory(sessionStorage.getItem("quizCategory"));
-setQuizAmount(sessionStorage.getItem("quizAmount"));
+    setQuizCategory(sessionStorage.getItem("quizCategory"));
+    setQuizAmount(sessionStorage.getItem("quizAmount"));
   }, []);
 
   useEffect(() => {
@@ -139,61 +144,64 @@ setQuizAmount(sessionStorage.getItem("quizAmount"));
   };
 
   return (
-     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 p-4">
-      <div className="w-full max-w-3xl">
+    <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 p-4">
+      <div className="w-full max-w-4xl">
         {/* Quiz Başlık ve Bilgi Çubuğu */}
-        
 
-      <Dialog open={openHeartModal}>
-        <DialogContent closable={false}>
-          <DialogHeader>
-            <DialogTitle>Üzgünüz tüm canlarınızı bitirdiniz 😢</DialogTitle>
-            <DialogDescription>
-              Yeniden başlamak için tıklayınız{" "}
-              <Button
-                className="mx-3"
-                onClick={() => {
-                  refreshQuiz();
-                }}
-              >
-                Yeniden Başla
-              </Button>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
-      <Dialog open={openTimeModal}>
-        <DialogContent closable={false}>
-          <DialogHeader>
-            <DialogTitle>Üzgünüz tüm zamanınız bitti 😢</DialogTitle>
-            <DialogDescription>
-              Sonuçları görüntülemek için tıklayınız{" "}
-              <Button
-                className="mx-3"
-                onClick={() => {
-                  router.push("/quiz-completed");
-                }}
-              >
-                Sonuçları Görüntüle
-              </Button>
-            </DialogDescription>
-          </DialogHeader>
-        </DialogContent>
-      </Dialog>
+        <Dialog open={openHeartModal}>
+          <DialogContent closable={false}>
+            <DialogHeader>
+              <DialogTitle>Üzgünüz tüm canlarınızı bitirdiniz 😢</DialogTitle>
+              <DialogDescription>
+                Yeniden başlamak için tıklayınız{" "}
+                <Button
+                  className="mx-3"
+                  onClick={() => {
+                    refreshQuiz();
+                  }}
+                >
+                  Yeniden Başla
+                </Button>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
+        <Dialog open={openTimeModal}>
+          <DialogContent closable={false}>
+            <DialogHeader>
+              <DialogTitle>Üzgünüz tüm zamanınız bitti 😢</DialogTitle>
+              <DialogDescription>
+                Sonuçları görüntülemek için tıklayınız{" "}
+                <Button
+                  className="mx-3"
+                  onClick={() => {
+                    router.push("/quiz-completed");
+                  }}
+                >
+                  Sonuçları Görüntüle
+                </Button>
+              </DialogDescription>
+            </DialogHeader>
+          </DialogContent>
+        </Dialog>
 
-      <Link href="/quiz">
-        <ArrowLeftFromLine />
-      </Link>
+        <Link href="/quiz">
+          <ArrowLeftFromLine />
+        </Link>
 
-     <div className="mb-6 flex items-center justify-between">
-          <h1 className="text-2xl font-bold text-slate-800">Quiz Konusu : {quizCategory}</h1>
+        <div className="mb-6 flex items-center justify-between">
+          <h1 className="text-2xl font-bold text-slate-800">
+            Quiz Konusu : {quizCategory}
+          </h1>
           <div className="flex items-center gap-4">
             {/* Zaman Göstergesi */}
             <div className="flex items-center gap-2">
               <Timer className="h-5 w-5 text-amber-500" />
               <div className="flex flex-col">
                 <span className="text-xs text-slate-500">Kalan Süre</span>
-                <span className="font-medium">{minutes}:{seconds}</span>
+                <span className="font-medium">
+                  {minutes}:{seconds}
+                </span>
               </div>
             </div>
 
@@ -202,81 +210,105 @@ setQuizAmount(sessionStorage.getItem("quizAmount"));
               <Heart className="h-5 w-5 text-red-500" />
               <div className="flex gap-1">
                 <Badge variant="outline" className="bg-red-500 text-white">
-                  <Heart className="mr-1 h-3 w-3 fill-current" />{hearts}
+                  <Heart className="mr-1 h-3 w-3 fill-current" />
+                  {hearts}
                 </Badge>
               </div>
             </div>
           </div>
         </div>
-      <div className="mb-6">
+        <div className="mb-6">
           <div className="mb-2 flex justify-between text-sm">
-            <span>Soru {quizQueue + 1}/{quizAmount}</span>
-            
+            <span>
+              Soru {quizQueue + 1}/{quizAmount}
+            </span>
           </div>
-          <Progress value={(quizQueue+1) * 100 / quizAmount} className="h-2" />
+          <Progress
+            value={((quizQueue + 1) * 100) / quizAmount}
+            className="h-2"
+          />
         </div>
 
-      <div key={quizQueue} className="mb-6 border p-4 rounded shadow">
-        <p className="font-semibold mb-2">
-          {quizQueue + 1}. {quizzes[quizQueue].question}
-        </p>
-        <ul className="list-disc pl-6">
-          {Object.entries(quizzes[quizQueue].options).map(([key, option]) => {
-            const isSelected = selectedIndex === key;
-            const isCorrect = quizzes[quizQueue].answer === key;
+       <Card className="border-2 border-slate-200 shadow-lg">
+          <CardHeader className="bg-slate-50 pb-4 pt-6">
+            <h2 className="text-center text-xl font-semibold text-slate-800">
+              {" "}
+              {quizzes[quizQueue].question}
+            </h2>
+          </CardHeader>
 
-            let liClass = "cursor-pointer my-2 px-2 py-1 rounded ";
+          <CardContent className="pt-6">
+            <div className="flex flex-col  gap-2">
+              {Object.entries(quizzes[quizQueue].options).map(
+                ([key, option]) => {
+                  const isSelected = selectedIndex === key;
+                  const isCorrect = quizzes[quizQueue].answer === key;
 
-            if (isSelected) {
-              liClass += isCorrect
-                ? "text-green-500 bg-green-100"
-                : "text-red-500 bg-red-100";
-            } else {
-              liClass += "hover:bg-gray-100";
-            }
+                  let liClass =
+                    "h-16 text-wrap   hover:cursor-pointer";
 
-            return (
-              <li
-                key={key}
-                onClick={() => choosenVariant(key, isCorrect)}
-                className={liClass}
-              >
-                <strong>{key})</strong> {option}
-              </li>
-            );
-          })}
-        </ul>
-        {checked && (
-          <p className="mt-2  text-green-700">{quizzes[quizQueue].explanation}</p>
+                  if (isSelected) {
+                    liClass += isCorrect
+                      ? "text-green-500 bg-green-100"
+                      : "text-red-500 bg-red-100";
+                  } else {
+                    liClass += "hover:cursor-pointer";
+                  }
+
+                  return (
+                    <Button
+                      key={key}
+                      onClick={() => choosenVariant(key, isCorrect)}
+                      className={liClass}
+                      variant="answerButton"
+                    >
+                      {option}
+                    </Button>
+                  );
+                }
+              )}
+            </div>
+          </CardContent>
+          <CardFooter className="flex justify-between border-t bg-slate-50 p-4 text-sm text-slate-500">
+<div>
+ {quizQueue === 0 ? null : (
+          <Button className={"cursor-pointer float-end mt-2 mr-2"} onClick={prevQuiz}>
+            <ArrowLeftFromLine /> Previous
+          </Button>
         )}
+</div>
+            <div>Puan: { parseFloat((100 / quizAmount).toFixed(1)) }
+</div>
+            <div>Zorluk: Kolay</div>
+<div>
+ {loading ? null : quizQueue === quizzes.length - 1 ? (
+          <Button
+            variant="outline"
+            className={"cursor-pointer float-end "}
+            onClick={() => {
+              setLoading(true);
+              router.push("/quiz-completed");
+            }}
+          >
+            <SendHorizontal /> Finish
+          </Button>
+        ) : (
+          <Button onClick={nextQuiz} className={"float-end mt-2 cursor-pointer"}>
+            <ArrowRightFromLine /> Next
+          </Button>
+        )}
+        {loading ? (
+          <Button disabled type="button" className="float-end p-4">
+            <Loader variant="secondary" size="lg" className="mx-auto  " />{" "}
+          </Button>
+        ) : null}
+       
+</div>
+          </CardFooter>
+        </Card>
+       
+        
       </div>
-      {loading ? null : quizQueue === quizzes.length - 1 ? (
-        <Button
-          variant="outline"
-          className={"cursor-pointer float-end "}
-          onClick={() => {
-            setLoading(true);
-            router.push("/quiz-completed");
-          }}
-        >
-          <SendHorizontal /> Finish
-        </Button>
-      ) : (
-        <Button onClick={nextQuiz} className={"float-end cursor-pointer"}>
-          <ArrowRightFromLine /> Next
-        </Button>
-      )}
-      {loading ? (
-        <Button disabled type="button" className="float-end p-4">
-          <Loader variant="secondary" size="lg" className="mx-auto  " />{" "}
-        </Button>
-      ) : null}
-      {quizQueue === 0 ? null : (
-        <Button className={"cursor-pointer"} onClick={prevQuiz}>
-          <ArrowLeftFromLine /> Previous
-        </Button>
-      )}
-    </div>
-</main>
+    </main>
   );
 }

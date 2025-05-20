@@ -114,7 +114,7 @@ useEffect(()=>{
               <Trophy className="h-10 w-10 text-primary" />
             </motion.div>
             <CardTitle className="text-3xl font-bold">Tebrikler!</CardTitle>
-            <CardDescription className="text-lg"> "{quizCategory}" Konulu Quiz Tamamlandı</CardDescription>
+            <CardDescription className="text-lg">&ldquo;{quizCategory}&rdquo; Konulu Quiz Tamamlandı</CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">

@@ -24,7 +24,7 @@ export default function QuizCompleted({
   const [showConfetti, setShowConfetti] = useState(false)
   const [percentage,setPercentage] = useState(0)
 const [pastedTime,setPastedTime] = useState(0)
-const [quizCategory,setQuizCategory] = useState('')
+const [quizCategory,setQuizCategory] = useState('Genel Quiz')
 const [quizTrueAnswer,setQuizTrueAnswer] = useState(0)
 const [quizFalseAnswer,setQuizFalseAnswer] = useState(0)
 const [quizAmount,setQuizAmount] = useState(0)
@@ -37,12 +37,18 @@ const [quizAmount,setQuizAmount] = useState(0)
     return `${mins}:${secs < 10 ? "0" : ""}${secs}`
   }
 useEffect(()=>{
-  setQuizAmount(sessionStorage.getItem('quizAmount'))
-  setQuizTrueAnswer(sessionStorage.getItem('quizTrueAnswer'))
-  setQuizFalseAnswer(sessionStorage.getItem('quizFalseAnswer'))
-  setQuizCategory(sessionStorage.getItem('quizCategory'))
-  setPercentage(Math.round(sessionStorage.getItem('quizScore')))
-  setPastedTime(sessionStorage.getItem('totalQuizTime')-sessionStorage.getItem('quizTime'))
+  const storedCategory = sessionStorage.getItem('quizCategory')
+  setQuizCategory(storedCategory || 'Genel Quiz')
+  setQuizAmount(sessionStorage.getItem('quizAmount') || 0)
+  setQuizTrueAnswer(sessionStorage.getItem('quizTrueAnswer') || 0)
+  setQuizFalseAnswer(sessionStorage.getItem('quizFalseAnswer') || 0)
+  setPercentage(Math.round(sessionStorage.getItem('quizScore') || 0))
+  const totalTime = parseInt(sessionStorage.getItem('totalQuizTime') || 0)
+  const quizTime = parseInt(sessionStorage.getItem('quizTime') || 0)
+  setPastedTime(totalTime - quizTime)
+console.log(typeof quizAmount);         // number olmalı
+console.log(typeof quizFalseAnswer);    // number olmalı
+console.log(typeof quizTrueAnswer);     // number olmalı
 },[])
  
   // Determine performance message based on score percentage
@@ -114,7 +120,9 @@ useEffect(()=>{
               <Trophy className="h-10 w-10 text-primary" />
             </motion.div>
             <CardTitle className="text-3xl font-bold">Tebrikler!</CardTitle>
-            <CardDescription className="text-lg">&ldquo;{quizCategory}&rdquo; Konulu Quiz Tamamlandı</CardDescription>
+            <CardDescription className="text-lg">
+              {quizCategory ? `${quizCategory} Konulu Quiz Tamamlandı` : 'Quiz Tamamlandı'}
+            </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-6">
@@ -182,7 +190,7 @@ useEffect(()=>{
               >
                 <CircleAlert className="h-8 w-8  mb-2" />
                 <h4 className="text-sm font-medium text-muted-foreground">Boş Kalan Cevaplar</h4>
-                <p className="text-2xl font-bold">{ quizAmount - (quizFalseAnswer + quizTrueAnswer) }</p>
+                <p className="text-2xl font-bold">{Number(quizAmount)-(Number(quizFalseAnswer)+Number(quizTrueAnswer))} </p>
               </motion.div>
             </div> 
 

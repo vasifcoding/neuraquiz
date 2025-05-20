@@ -12,14 +12,14 @@ import  Mycombobox  from "@/components/ui/combobox"
 import { toast } from "react-toastify"
 import ToastNotification from "@/components/ui/toastnotification"
 import { Bounce } from "react-toastify";
-export default function QuizForm() {
+export default function QuizForm({category}) {
 const router = useRouter()
 
  const [loading , setLoading] = useState(false)
   const [formData, setFormData] = useState({
     number: "",
-    text: "",
-    difficulty: "normal",
+    text: category ||   "",
+    difficulty: "",
     
   })
 // const handleLanguageChange = (newLang) => {
@@ -75,12 +75,28 @@ const router = useRouter()
       });
       return;
     }
+else if(!formData.difficulty){
+
+ toast.error('Bir zorluk seviyesi seçiniz!', {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+      return;
+}
 
     try {
       setLoading(true);
       console.log("Form submitted:", formData);
        sessionStorage.setItem("quizCategory", formData.text);
        sessionStorage.setItem("quizAmount", formData.number);
+       sessionStorage.setItem("quizDifficulty", formData.difficulty);
       const response = await axios.post('/api/getquiz', {
         difficulty: formData.difficulty,
         category: formData.text,
@@ -100,7 +116,7 @@ const router = useRouter()
       router.push('/quizzes');
     } catch (error) {
       console.error(error);
-      toast.error('An error occurred while fetching the quiz!');
+      toast.error('Quiz oluşturulurken bir hata oluştu , lütfen tekrar deneyiniz.');
     } finally {
       setLoading(false);
     }
@@ -113,20 +129,20 @@ const router = useRouter()
     <Card className="w-full max-w-md mx-auto">
 <ToastNotification />
       <CardHeader>
-        <CardTitle className="text-center">Quiz Settings</CardTitle>
+        <CardTitle className="text-center">Quiz Ayarları</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
             {/* Number Input */}
             <div className="space-y-2">
-              <Label htmlFor="number">Number of quizzes</Label>
+              <Label htmlFor="number">Quiz Sayısı</Label>
               <Input
                 min={1}
                 id="number"
                 name="number"
                 type="number"
-                placeholder=" Enter a number"
+                placeholder=" Bir sayı giriniz"
                 value={formData.number}
                 onChange={handleChange}
                 required
@@ -140,11 +156,11 @@ const router = useRouter()
 
             {/* Text Input */}
             <div className="space-y-2">
-              <Label htmlFor="text">Which subject do you want to make a quiz in?</Label>
+              <Label htmlFor="text">Hangi konuda quiz yapmak istersiniz?</Label>
               <Input
                 id="text"
                 name="text"
-                placeholder="Physics, Chemistry, Biology, etc."
+                placeholder="Kuantum Dolanıklık ,CRISPR , Astrobiyoloji ..."
                 value={formData.text}
                 onChange={handleChange}
                 required
@@ -153,24 +169,28 @@ const router = useRouter()
 
             {/* Radio Selections */}
             <div className="space-y-2">
-              <Label>Quiz Difficulty</Label>
+              <Label className="mb-4">Quiz Zorluk Seviyesi</Label>
               <RadioGroup
-                defaultValue="normal"
+                defaultValue="Kolay"
                 value={formData.difficulty}
                 onValueChange={handleRadioChange}
                 className="flex flex-col space-y-2"
               >
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="hard" id="hard" />
-                  <Label htmlFor="hard">Hard</Label>
+                  <RadioGroupItem value="Zor" id="Zor" />
+                  <Label htmlFor="zor">Zor</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="normal" id="normal" />
+                  <RadioGroupItem value="Orta-zor" id="Orta-zor" />
+                  <Label htmlFor="orta-zor">Orta - Zor</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="Normal" id="Normal" />
                   <Label htmlFor="normal">Normal</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="easy" id="easy" />
-                  <Label htmlFor="easy">Easy</Label>
+                  <RadioGroupItem  value="Kolay" id="Kolay" />
+                  <Label htmlFor="Kolay">Kolay</Label>
                 </div>
               </RadioGroup>
             </div>
@@ -180,7 +200,7 @@ const router = useRouter()
          
          
           {loading ? <Button disabled type="button" className="w-full p-4"><Loader variant="secondary" size="lg" className="mx-auto  " /> </Button>:  <Button  type="submit" className="w-full">
-            Confirm
+            Gönder
           </Button>}
         </form>
       </CardContent>

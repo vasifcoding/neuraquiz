@@ -13,24 +13,24 @@ return (
             <span className="text-xl font-bold">Quiz AI</span>
           </div>
           <nav className="hidden md:flex items-center gap-6">
-            <Link href="#" className="text-sm font-medium hover:text-primary">
-              Home
+            <Link href="/" className="text-sm font-medium hover:text-primary">
+              Ana Sayfa
             </Link>
             <Link href="/categories" className="text-sm font-medium text-muted-foreground hover:text-primary">
-              Categories
+              Kategoriler
             </Link>
             <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-primary">
-              Leaderboard
+              Katılımcılar
             </Link>
             <Link href="#" className="text-sm font-medium text-muted-foreground hover:text-primary">
-              About
+              Hakkımızda
             </Link>
           </nav>
           <div className="flex items-center gap-4">
             <Button variant="outline" size="sm" className="hidden md:flex">
-              Log in
+              Giriş Yap
             </Button>
-            <Button size="sm">Sign up</Button>
+            <Button size="sm">Kayıt ol</Button>
           </div>
         </div>
       </header>

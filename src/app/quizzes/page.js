@@ -41,10 +41,18 @@ export default function QuizzesPage() {
   const [loading, setLoading] = useState(false);
   const [quizCategory, setQuizCategory] = useState(null);
   const [quizAmount, setQuizAmount] = useState(null);
+  const [quizDifficulty, setQuizDifficulty] = useState(null);
+const [quizScore, setQuizScore] = useState(0);
+const [totalQuizTime, setTotalQuizTime] = useState(0);
+const [disableQuiz, setDisableQuiz] = useState(false);
+const [trueAnswer, setTrueAnswer] = useState(0);
+const [falseAnswer, setFalseAnswer] = useState(0);
   const nextQuiz = () => {
+    setDisableQuiz(false)
     setQuizQueue(quizQueue + 1);
     setSelectedIndex(null);
     setChecked(false);
+
   };
   const prevQuiz = () => {
     setQuizQueue(quizQueue - 1);
@@ -61,8 +69,8 @@ export default function QuizzesPage() {
   }, [hearts]);
 
   useEffect(() => {
-    setHearts(6);
-
+    setHearts(3);
+    setTotalQuizTime(sessionStorage.getItem("totalQuizTime"))
     const stored = sessionStorage.getItem("quizData");
     if (stored) {
       try {
@@ -85,6 +93,7 @@ export default function QuizzesPage() {
         if (typeof parsedTime === "string") {
           const [min, sec] = parsedTime.split(".").map(Number);
           setQuizTime(min * 60 + sec);
+          sessionStorage.setItem("totalQuizTime", JSON.stringify(min * 60 + sec));
         } else if (typeof parsedTime === "number") {
           setQuizTime(parsedTime);
         } else {
@@ -98,6 +107,7 @@ export default function QuizzesPage() {
     }
     setQuizCategory(sessionStorage.getItem("quizCategory"));
     setQuizAmount(sessionStorage.getItem("quizAmount"));
+    setQuizDifficulty(sessionStorage.getItem("quizDifficulty"));
   }, []);
 
   useEffect(() => {
@@ -128,20 +138,41 @@ export default function QuizzesPage() {
   }
 
   const choosenVariant = (e, isCorrect) => {
+setDisableQuiz(true)
     setSelectedIndex(e);
     isCorrect ? setChecked(true) : setChecked(false);
     isCorrect ? null : removeHeart();
+    if (isCorrect) {
+      setTrueAnswer(prev => prev + 1);
+      setQuizScore(prev => prev + parseFloat((100 / quizAmount).toFixed(1)));
+    } 
+    else{
+      setFalseAnswer(prev => prev + 1);
+    }
   };
 
+
   const refreshQuiz = () => {
+    setTrueAnswer(0);
+    setFalseAnswer(0);
+    setDisableQuiz(false)
+    setQuizScore(0)
     setOpenHeartModal(false);
-    setHearts(6);
+    setHearts(3);
     setQuizQueue(0);
     setChecked(false);
     setSelectedIndex(null);
-    setQuizTime(300);
+    setQuizTime(totalQuizTime);
     sessionStorage.setItem("quizTime", JSON.stringify(300));
   };
+
+const finishQuiz = () => {
+ sessionStorage.setItem("quizTrueAnswer", trueAnswer);
+ sessionStorage.setItem("quizFalseAnswer", falseAnswer);
+ sessionStorage.setItem("quizScore", quizScore);
+  setLoading(true);
+  router.push("/quiz-completed");
+}
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 p-4">
@@ -175,7 +206,7 @@ export default function QuizzesPage() {
                 <Button
                   className="mx-3"
                   onClick={() => {
-                    router.push("/quiz-completed");
+                    finishQuiz();
                   }}
                 >
                   Sonuçları Görüntüle
@@ -233,7 +264,7 @@ export default function QuizzesPage() {
           <CardHeader className="bg-slate-50 pb-4 pt-6">
             <h2 className="text-center text-xl font-semibold text-slate-800">
               {" "}
-              {quizzes[quizQueue].question}
+              {quizzes[quizQueue].question} 
             </h2>
           </CardHeader>
 
@@ -249,14 +280,15 @@ export default function QuizzesPage() {
 
                   if (isSelected) {
                     liClass += isCorrect
-                      ? "text-green-500 bg-green-100"
-                      : "text-red-500 bg-red-100";
+                      ? "text-green-500 bg-green-200"
+                      : "text-red-500 bg-red-200";
                   } else {
                     liClass += "hover:cursor-pointer";
                   }
 
                   return (
                     <Button
+                      disabled={disableQuiz}
                       key={key}
                       onClick={() => choosenVariant(key, isCorrect)}
                       className={liClass}
@@ -269,25 +301,18 @@ export default function QuizzesPage() {
               )}
             </div>
           </CardContent>
+ {disableQuiz ? <span className="text-sm md:text-base text-wrap p-2 italic  text-center text-green-500 ">{quizzes[quizQueue].explanation}</span> : null}
           <CardFooter className="flex justify-between border-t bg-slate-50 p-4 text-sm text-slate-500">
-<div>
- {quizQueue === 0 ? null : (
-          <Button className={"cursor-pointer float-end mt-2 mr-2"} onClick={prevQuiz}>
-            <ArrowLeftFromLine /> Previous
-          </Button>
-        )}
-</div>
-            <div>Puan: { parseFloat((100 / quizAmount).toFixed(1)) }
-</div>
-            <div>Zorluk: Kolay</div>
+
+            
+            <div>Zorluk: {quizDifficulty}</div>
 <div>
  {loading ? null : quizQueue === quizzes.length - 1 ? (
           <Button
             variant="outline"
             className={"cursor-pointer float-end "}
             onClick={() => {
-              setLoading(true);
-              router.push("/quiz-completed");
+             finishQuiz();
             }}
           >
             <SendHorizontal /> Finish

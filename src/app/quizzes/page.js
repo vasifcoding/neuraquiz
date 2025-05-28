@@ -97,7 +97,7 @@ const [falseAnswer, setFalseAnswer] = useState(0);
         } else if (typeof parsedTime === "number") {
           setQuizTime(parsedTime);
         } else {
-          setQuizTime(300); // Default 5 dakika (300 saniye)
+          setQuizTime(300); // Default 5 dakika 300 saniye
         }
       } catch {
         setQuizTime(300); // Default zaman

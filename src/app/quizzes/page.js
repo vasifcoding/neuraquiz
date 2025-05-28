@@ -162,8 +162,9 @@ setDisableQuiz(true)
     setQuizQueue(0);
     setChecked(false);
     setSelectedIndex(null);
-    setQuizTime(totalQuizTime);
-    sessionStorage.setItem("quizTime", JSON.stringify(300));
+    const storedTotalTime = JSON.parse(sessionStorage.getItem("totalQuizTime"));
+    setQuizTime(storedTotalTime);
+    sessionStorage.setItem("quizTime", JSON.stringify(storedTotalTime));
   };
 
 const finishQuiz = () => {

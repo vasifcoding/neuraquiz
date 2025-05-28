@@ -12,7 +12,7 @@ export default function Footer() {
               <span className="text-lg font-bold">QuizAI</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} QuizAI. All rights reserved.
+              © {new Date().getFullYear()} QuizAI. All rights reserved. | v1.2.0
             </p>
             <div className="flex gap-4">
               <Link href="#" className="text-sm text-muted-foreground hover:text-primary">

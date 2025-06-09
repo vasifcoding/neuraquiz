@@ -155,7 +155,7 @@ export default function About() {
 
             <ResultCard icon={<Award className="h-8 w-8 text-primary" />} title="Özel Unvanlar">
               <p className="mt-2">
-                Performansınıza göre verilen özel bir unvan kazanın (örneğin "Quiz Ustası" veya "Çaylak" 😊)
+                Performansınıza göre verilen özel bir unvan kazanın (örneğin Quiz Ustası veya Çaylak 😊)
               </p>
               <div className="flex flex-wrap gap-2 mt-3">
                 <Badge className="bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0">Quiz Ustası</Badge>

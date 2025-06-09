@@ -185,8 +185,8 @@ else if(!formData.difficulty){
                   <Label htmlFor="orta-zor">Orta - Zor</Label>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="Normal" id="Normal" />
-                  <Label htmlFor="normal">Normal</Label>
+                  <RadioGroupItem value="Orta" id="Orta" />
+                  <Label htmlFor="Orta">Orta</Label>
                 </div>
                 <div className="flex items-center space-x-2">
                   <RadioGroupItem  value="Kolay" id="Kolay" />

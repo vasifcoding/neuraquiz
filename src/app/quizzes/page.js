@@ -42,17 +42,18 @@ export default function QuizzesPage() {
   const [quizCategory, setQuizCategory] = useState(null);
   const [quizAmount, setQuizAmount] = useState(null);
   const [quizDifficulty, setQuizDifficulty] = useState(null);
-const [quizScore, setQuizScore] = useState(0);
-const [totalQuizTime, setTotalQuizTime] = useState(0);
-const [disableQuiz, setDisableQuiz] = useState(false);
-const [trueAnswer, setTrueAnswer] = useState(0);
-const [falseAnswer, setFalseAnswer] = useState(0);
+  const [quizScore, setQuizScore] = useState(0);
+  const [totalQuizTime, setTotalQuizTime] = useState(0);
+  const [disableQuiz, setDisableQuiz] = useState(false);
+  const [trueAnswer, setTrueAnswer] = useState(0);
+  const [falseAnswer, setFalseAnswer] = useState(0);
+  const [shouldFinish, setShouldFinish] = useState(false);
+
   const nextQuiz = () => {
-    setDisableQuiz(false)
+    setDisableQuiz(false);
     setQuizQueue(quizQueue + 1);
     setSelectedIndex(null);
     setChecked(false);
-
   };
   const prevQuiz = () => {
     setQuizQueue(quizQueue - 1);
@@ -70,7 +71,7 @@ const [falseAnswer, setFalseAnswer] = useState(0);
 
   useEffect(() => {
     setHearts(3);
-    setTotalQuizTime(sessionStorage.getItem("totalQuizTime"))
+    setTotalQuizTime(sessionStorage.getItem("totalQuizTime"));
     const stored = sessionStorage.getItem("quizData");
     if (stored) {
       try {
@@ -93,7 +94,10 @@ const [falseAnswer, setFalseAnswer] = useState(0);
         if (typeof parsedTime === "string") {
           const [min, sec] = parsedTime.split(".").map(Number);
           setQuizTime(min * 60 + sec);
-          sessionStorage.setItem("totalQuizTime", JSON.stringify(min * 60 + sec));
+          sessionStorage.setItem(
+            "totalQuizTime",
+            JSON.stringify(min * 60 + sec)
+          );
         } else if (typeof parsedTime === "number") {
           setQuizTime(parsedTime);
         } else {
@@ -126,6 +130,16 @@ const [falseAnswer, setFalseAnswer] = useState(0);
     return () => clearInterval(timer);
   }, [quizTime]);
 
+  useEffect(() => {
+    if (shouldFinish && quizQueue === quizzes.length - 1) {
+      const timer = setTimeout(() => {
+        finishQuiz();
+        setShouldFinish(false);
+      }, 1500);
+      return () => clearTimeout(timer);
+    }
+  }, [shouldFinish, quizQueue]);
+
   const minutes = String(Math.floor((quizTime || 0) / 60)).padStart(2, "0");
   const seconds = String((quizTime || 0) % 60).padStart(2, "0");
 
@@ -137,26 +151,44 @@ const [falseAnswer, setFalseAnswer] = useState(0);
     );
   }
 
+  const finishQuiz = () => {
+    sessionStorage.setItem("quizTrueAnswer", trueAnswer);
+    sessionStorage.setItem("quizFalseAnswer", falseAnswer);
+    sessionStorage.setItem("quizScore", quizScore);
+    setLoading(true);
+    router.push("/quiz-completed");
+  };
+
   const choosenVariant = (e, isCorrect) => {
-setDisableQuiz(true)
+    setDisableQuiz(true);
     setSelectedIndex(e);
     isCorrect ? setChecked(true) : setChecked(false);
     isCorrect ? null : removeHeart();
+
     if (isCorrect) {
-      setTrueAnswer(prev => prev + 1);
-      setQuizScore(prev => prev + parseFloat((100 / quizAmount).toFixed(1)));
-    } 
-    else{
-      setFalseAnswer(prev => prev + 1);
+      setTrueAnswer((prev) => prev + 1);
+      setQuizScore((prev) => prev + parseFloat((100 / quizAmount).toFixed(1)));
+    } else {
+      setFalseAnswer((prev) => prev + 1);
+    }
+
+    if (quizQueue === quizzes.length - 1) {
+      setShouldFinish(true);
+    } else {
+      if (hearts == 1 && !isCorrect) {
+      } else {
+        setTimeout(() => {
+          nextQuiz();
+        }, 1500);
+      }
     }
   };
-
 
   const refreshQuiz = () => {
     setTrueAnswer(0);
     setFalseAnswer(0);
-    setDisableQuiz(false)
-    setQuizScore(0)
+    setDisableQuiz(false);
+    setQuizScore(0);
     setOpenHeartModal(false);
     setHearts(3);
     setQuizQueue(0);
@@ -165,15 +197,8 @@ setDisableQuiz(true)
     const storedTotalTime = JSON.parse(sessionStorage.getItem("totalQuizTime"));
     setQuizTime(storedTotalTime);
     sessionStorage.setItem("quizTime", JSON.stringify(storedTotalTime));
+    setOpenTimeModal(false);
   };
-
-const finishQuiz = () => {
- sessionStorage.setItem("quizTrueAnswer", trueAnswer);
- sessionStorage.setItem("quizFalseAnswer", falseAnswer);
- sessionStorage.setItem("quizScore", quizScore);
-  setLoading(true);
-  router.push("/quiz-completed");
-}
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-slate-50 to-slate-100 p-4">
@@ -185,7 +210,7 @@ const finishQuiz = () => {
             <DialogHeader>
               <DialogTitle>Üzgünüz tüm canlarınızı bitirdiniz 😢</DialogTitle>
               <DialogDescription>
-                Yeniden başlamak için tıklayınız{" "}
+                Yeniden başlamak için tıklayınız :{" "}
                 <Button
                   className="mx-3"
                   onClick={() => {
@@ -203,15 +228,28 @@ const finishQuiz = () => {
             <DialogHeader>
               <DialogTitle>Üzgünüz tüm zamanınız bitti 😢</DialogTitle>
               <DialogDescription>
-                Sonuçları görüntülemek için tıklayınız{" "}
-                <Button
-                  className="mx-3"
-                  onClick={() => {
-                    finishQuiz();
-                  }}
-                >
-                  Sonuçları Görüntüle
-                </Button>
+                <span className="text-base text-muted-foreground ">
+                  {" "}
+                  Sonuçları görüntülemek için tıklayınız{" "}
+                </span>
+                <span className="mt-3 block">
+                  <Button
+                    className=""
+                    onClick={() => {
+                      finishQuiz();
+                    }}
+                  >
+                    Sonuçları Görüntüle
+                  </Button>
+                  <Button
+                    className="ms-2"
+                    onClick={() => {
+                      refreshQuiz();
+                    }}
+                  >
+                    Tekrar Dene
+                  </Button>
+                </span>
               </DialogDescription>
             </DialogHeader>
           </DialogContent>
@@ -261,11 +299,11 @@ const finishQuiz = () => {
           />
         </div>
 
-       <Card className="border-2 border-slate-200 shadow-lg">
+        <Card className="border-2 border-slate-200 shadow-lg">
           <CardHeader className="bg-slate-50 pb-4 pt-6">
             <h2 className="text-center text-xl font-semibold text-slate-800">
               {" "}
-              {quizzes[quizQueue].question} 
+              {quizzes[quizQueue].question}
             </h2>
           </CardHeader>
 
@@ -276,8 +314,7 @@ const finishQuiz = () => {
                   const isSelected = selectedIndex === key;
                   const isCorrect = quizzes[quizQueue].answer === key;
 
-                  let liClass =
-                    "h-16 text-wrap   hover:cursor-pointer";
+                  let liClass = "h-16  whitespace-normal  hover:cursor-pointer";
 
                   if (isSelected) {
                     liClass += isCorrect
@@ -302,12 +339,10 @@ const finishQuiz = () => {
               )}
             </div>
           </CardContent>
- {disableQuiz ? <span className="text-sm md:text-base text-wrap p-2 italic  text-center text-green-500 ">{quizzes[quizQueue].explanation}</span> : null}
-          <CardFooter className="flex justify-between border-t bg-slate-50 p-4 text-sm text-slate-500">
 
-            
+          <CardFooter className="flex justify-center border-t bg-slate-50 p-4 text-sm text-slate-500">
             <div>Zorluk: {quizDifficulty}</div>
-<div>
+            {/* <div>
  {loading ? null : quizQueue === quizzes.length - 1 ? (
           <Button
             variant="outline"
@@ -329,11 +364,9 @@ const finishQuiz = () => {
           </Button>
         ) : null}
        
-</div>
+</div> */}
           </CardFooter>
         </Card>
-       
-        
       </div>
     </main>
   );

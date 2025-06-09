@@ -27,7 +27,7 @@ export default function HomePage() {
         <section className="container mx-auto flex justify-center py-12 md:py-24 lg:py-32">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center justify-center gap-4 text-center">
             <h1 className="text-3xl font-bold leading-tight sm:text-5xl md:text-6xl">
-              <span className="text-primary">QuizAI {" "}</span>
+              <span className="text-primary">NeuraQuiz {" "}</span>
              ile Bilginizi Test Edin
             </h1>
             <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
@@ -104,7 +104,7 @@ kategorilerdeki sınırsız sayıda sınavla kendinize meydan okuyun. Öğrenin,
   <div className="container px-4 mx-auto">
     <div className="mx-auto max-w-[58rem] text-center mb-12">
       <h2 className="text-3xl font-bold leading-tight tracking-tight sm:text-4xl md:text-5xl bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
-        Neden QuizAI?
+        Neden NeuraQuiz?
       </h2>
       <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
         Bilgilerini genişleten ve becerilerini yapay zeka tarafından oluşturulan sınavlarla test eden binlerce kullanıcıya katılın
@@ -169,15 +169,21 @@ kategorilerdeki sınırsız sayıda sınavla kendinize meydan okuyun. Öğrenin,
               Bilginizi Test Etmeye Hazır mısınız?
             </h2>
             <p className="mt-4 text-muted-foreground">
-              Hesabınızı oluşturun, arkadaşlarınızla yarışın ve başarılarınızı takip edin.
+              Konularınızı seçin , zorluk seviyesini ayarlayın ve sınava başlayın.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              <Button size="lg" className="gap-2">
-                Şimdi Kayıt Ol <ArrowRight className="h-4 w-4" />
-              </Button>
+              <Link href="/quiz" >
+<Button size="lg" className="gap-2">
+ Şimdi Başla <ArrowRight className="h-4 w-4" />
+</Button>
+               
+              </Link>
+
+              <Link href="/about">
               <Button variant="outline" size="lg">
                 Daha Fazla 
               </Button>
+              </Link>
             </div>
           </div>
         </section>

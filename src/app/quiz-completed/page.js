@@ -103,7 +103,15 @@ console.log(typeof quizTrueAnswer);     // number olmalı
       }, 250)
     }
   }, [percentage])
+const refreshQuiz =  () => {
+const totalTime = parseInt(sessionStorage.getItem('totalQuizTime') || 0)
+sessionStorage.setItem('quizTrueAnswer',0)
+sessionStorage.setItem('quizFalseAnswer',0)
+sessionStorage.setItem('quizScore',0)
+sessionStorage.setItem('quizTime',totalTime)
+router.push('/quizzes')
 
+}
   const badge = getBadge()
 
   return (
@@ -227,8 +235,13 @@ console.log(typeof quizTrueAnswer);     // number olmalı
             </Button> */}
             <Button onClick={()=>{router.push('/')}} className="w-full sm:w-auto gap-2" variant="outline">
               <Home className="h-4 w-4" />
-              Back to Home
-            </Button> 
+              Ana sayfaya dön
+            </Button>
+
+        <Button onClick={()=>{refreshQuiz()}}>
+
+Tekrar Dene
+</Button>
           </CardFooter>
         </Card>
       </motion.div>

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeftFromLine } from "lucide-react";
 
 export default async function QuizFormPage({ searchParams }) {
-  const category = searchParams?.category?.replace(/-/g, " ") ?? null;
+  const category = await searchParams?.category?.replace(/-/g, " ") ?? null;
   return (
     <div className=" p-3  container mx-auto py-10">
       <Link href="/">

@@ -46,7 +46,7 @@ export default function CategoryCard({
         <p className="text-sm text-muted-foreground">{quizCount} Quiz</p>
         <Button variant="ghost" size="sm" className="gap-1" asChild>
           <Link href={link}>
-            Daha Fazla <ArrowRight className="h-3 w-3" />
+            Başla <ArrowRight className="h-3 w-3" />
           </Link>
         </Button>
       </CardFooter>

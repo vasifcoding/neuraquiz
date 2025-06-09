@@ -4,25 +4,20 @@ import Link from "next/link"
 export default function Footer() {
   return (
     <>
-       <footer className="  w-full border-t bg-muted/50">
+       <footer className="   w-full border-t bg-muted/50">
         <div className="py-8 md:py-12 flex justify-center">
           <div className="flex flex-col items-center justify-between gap-4 md:flex-row max-w-5xl w-full">
             <div className="flex items-center gap-2">
               <Brain className="h-5 w-5 text-primary" />
-              <span className="text-lg font-bold">QuizAI</span>
+              <span className="text-lg font-bold">NeuraQuiz</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              © {new Date().getFullYear()} QuizAI. All rights reserved. | v1.2.0
+              © {new Date().getFullYear()} NeuraQuiz. Tüm Hakları Saklıdır. | v1.2.1
             </p>
             <div className="flex gap-4">
-              <Link href="#" className="text-sm text-muted-foreground hover:text-primary">
-                Terms
-              </Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-primary">
-                Privacy
-              </Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:text-primary">
-                Contact
+              
+              <Link href="mailto:garayevvasif2004@gmail.com" className="text-sm text-muted-foreground hover:text-primary">
+                İletişim
               </Link>
             </div>
           </div>

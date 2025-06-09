@@ -177,7 +177,7 @@ Not: Sorular yapay zeka tarafından oluşturulduğu için bazı sorular yanlış
             </p>
             <Link href="/quiz">
             <Button size="lg" className="gap-2">
-              İlk Quiz'inizi Oluşturun <ArrowRight className="h-4 w-4" />
+              İlk Quiz&apos;inizi Oluşturun <ArrowRight className="h-4 w-4" />
             </Button>
             </Link>
           </div>

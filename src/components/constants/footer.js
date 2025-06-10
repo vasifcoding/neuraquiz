@@ -16,9 +16,7 @@ export default function Footer() {
             </p>
             <div className="flex gap-4">
               
-              <Link href="mailto:garayevvasif2004@gmail.com" className="text-sm text-muted-foreground hover:text-primary">
-                İletişim
-              </Link>
+             
             </div>
           </div>
         </div>

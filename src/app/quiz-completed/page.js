@@ -46,9 +46,9 @@ useEffect(()=>{
   const totalTime = parseInt(sessionStorage.getItem('totalQuizTime') || 0)
   const quizTime = parseInt(sessionStorage.getItem('quizTime') || 0)
   setPastedTime(totalTime - quizTime)
-console.log(typeof quizAmount);         // number olmalı
-console.log(typeof quizFalseAnswer);    // number olmalı
-console.log(typeof quizTrueAnswer);     // number olmalı
+// console.log(typeof quizAmount);         // number olmalı
+// console.log(typeof quizFalseAnswer);    // number olmalı
+// console.log(typeof quizTrueAnswer);     // number olmalı
 },[])
  
   // Determine performance message based on score percentage

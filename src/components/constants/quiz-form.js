@@ -93,7 +93,7 @@ else if(!formData.difficulty){
 
     try {
       setLoading(true);
-      console.log("Form submitted:", formData);
+      // console.log("Form submitted:", formData);
        sessionStorage.setItem("quizCategory", formData.text);
        sessionStorage.setItem("quizAmount", formData.number);
        sessionStorage.setItem("quizDifficulty", formData.difficulty);
@@ -115,7 +115,7 @@ else if(!formData.difficulty){
       sessionStorage.setItem("quizTime", JSON.stringify(quizMeta.quizTime));
       router.push('/quizzes');
     } catch (error) {
-      console.error(error);
+      // console.error(error);
       toast.error('Quiz oluşturulurken bir hata oluştu , lütfen tekrar deneyiniz.');
     } finally {
       setLoading(false);

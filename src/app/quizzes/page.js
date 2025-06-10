@@ -82,7 +82,7 @@ export default function QuizzesPage() {
         const parsed = JSON.parse(cleaned);
         setQuizzes(parsed);
       } catch (err) {
-        console.error("JSON parse hatası:", err);
+        // console.error("JSON parse hatası:", err);
       }
     }
 

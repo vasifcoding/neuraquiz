@@ -29,6 +29,9 @@ export default function Header() {
           <Link href="/about" className="text-sm font-medium text-muted-foreground hover:text-primary">
             Hakkında
           </Link>
+ <Link href="mailto:garayevvasif2004@gmail.com" className="text-sm font-medium text-muted-foreground hover:text-primary">
+                İletişim
+              </Link>
         </nav>
 
         <div className="hidden md:flex items-center gap-4">
@@ -84,6 +87,9 @@ export default function Header() {
                 >
                   Hakkında
                 </Link>
+ <Link href="mailto:garayevvasif2004@gmail.com" className="px-2 py-1 text-lg text-muted-foreground hover:text-primary transition-colors">
+                İletişim
+              </Link>
               </nav>
 
               <div className="mt-auto border-t py-4">

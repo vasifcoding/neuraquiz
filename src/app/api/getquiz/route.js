@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 
-// API key'i burada kullanıyoruz
-const ai = new GoogleGenAI({ apiKey: "AIzaSyCqfSes7lD2MCPaSAQMQQrafcag8snqLdM" });
+const key = process.env['API_KEY']
+const ai = new GoogleGenAI({ apiKey: key });
 
 export async function POST(request) {
   try {
